@@ -2,10 +2,64 @@ class HashTableEntry:
     """
     Linked List hash table key/value pair
     """
+
     def __init__(self, key, value):
         self.key = key
         self.value = value
         self.next = None
+
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+    def insert(self, node):
+        cur = self.head
+        if cur is None:
+            self.head = node
+        else:
+            while cur is not None:
+                if cur.key == node.key:
+                    cur.value = node.value
+                    break
+                elif cur.next is None:
+                    cur.next = node
+                    break
+                else:
+                    cur = cur.next
+
+    def find(self, key):
+        cur = self.head
+        while cur is not None:
+            if cur.key == key:
+                return cur.value
+            cur = cur.next
+        return None
+
+    def traverse(self):
+        cur = self.head
+        if cur is not None:
+            self.head = self.head.next
+            return cur
+        return None
+
+    def remove(self, key):
+        cur = self.head
+        prev = self.head
+
+        if cur.key == key:
+            self.head = self.head.next
+            return cur
+        prev = cur
+        cur = cur.next
+        while cur is not None:
+            if cur.key == key:
+                prev.next = cur.next
+                return cur.value
+            else:
+                prev = prev.next
+                cur = cur.next
+        return None
 
 
 # Hash table can't have fewer than this many slots
@@ -22,7 +76,9 @@ class HashTable:
 
     def __init__(self, capacity):
         # Your code here
-
+        self.data = [None] * capacity
+        self.capacity = capacity
+        self.items = 0
 
     def get_num_slots(self):
         """
@@ -36,7 +92,6 @@ class HashTable:
         """
         # Your code here
 
-
     def get_load_factor(self):
         """
         Return the load factor for this hash table.
@@ -44,7 +99,6 @@ class HashTable:
         Implement this.
         """
         # Your code here
-
 
     def fnv1(self, key):
         """
@@ -55,23 +109,24 @@ class HashTable:
 
         # Your code here
 
-
     def djb2(self, key):
         """
         DJB2 hash, 32-bit
 
         Implement this, and/or FNV-1.
         """
-        # Your code here
-
+        hash = 5381
+        for c in key:
+            hash = (hash * 33) + ord(c)
+        return hash
 
     def hash_index(self, key):
         """
         Take an arbitrary key and return a valid integer index
         between within the storage capacity of the hash table.
         """
-        #return self.fnv1(key) % self.capacity
-        return self.djb2(key) % self.capacity
+        # return self.fnv1(key) % self.capacity
+        return self.djb2(key) % len(self.data)
 
     def put(self, key, value):
         """
@@ -81,8 +136,15 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
-
+        index = self.hash_index(key)
+        if self.data[index] is None:
+            link_list = LinkedList()
+            link_list.insert(HashTableEntry(key, value))
+            self.data[index] = link_list
+            self.items += 1
+        else:
+            self.data[index].insert(HashTableEntry(key, value))
+            self.items += 1
 
     def delete(self, key):
         """
@@ -92,8 +154,13 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
-
+        index = self.hash_index(key)
+        removed = self.data[index].remove(key)
+        if removed is not None:
+            self.items -= 1
+            return removed
+        else:
+            return None
 
     def get(self, key):
         """
@@ -103,8 +170,10 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
-
+        indexone = self.hash_index(key)
+        if self.data[indexone] is not None:
+            return self.data[indexone].find(key)
+        return None
 
     def resize(self, new_capacity):
         """
@@ -114,7 +183,6 @@ class HashTable:
         Implement this.
         """
         # Your code here
-
 
 
 if __name__ == "__main__":
