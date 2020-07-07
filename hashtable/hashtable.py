@@ -98,7 +98,7 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        return self.items/len(self.data)
 
     def fnv1(self, key):
         """
@@ -145,6 +145,9 @@ class HashTable:
         else:
             self.data[index].insert(HashTableEntry(key, value))
             self.items += 1
+        resize_factor = self.get_load_factor()
+        if resize_factor >= 0.7:
+            self.resize(len(self.data)*2)
 
     def delete(self, key):
         """
@@ -182,7 +185,13 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        new_data = HashTable(new_capacity)
+        for i in range(0, len(self.data)):
+            if self.data[i] is not None:
+                while self.data[i].head is not None:
+                    LinkedList_node = self.data[i].traverse()
+                    new_data.put(LinkedList_node.key, LinkedList_node.value)
+        self.data = new_data.data
 
 
 if __name__ == "__main__":
