@@ -90,7 +90,8 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+
+        return len(self.data)
 
     def get_load_factor(self):
         """
