@@ -13,3 +13,14 @@ def f(x):
 
 # Your code here
 
+
+def solution(q):
+    for i in q:
+        for j in q:
+            for k in q:
+                for m in q:
+                    if f(i) + f(j) == f(k) - f(m):
+                        print(f'{f(i)} + {f(j)} = {f(k)} - {f(m)}')
+
+
+print(solution(q))
